@@ -1,5 +1,5 @@
 <div align="center">
-<img src=https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.neweurope.eu%2Fwp-content%2Fuploads%2F2018%2F06%2Fh_51519413.jpg&imgrefurl=https%3A%2F%2Fwww.neweurope.eu%2Farticle%2Fnato-planes-begin-patrolling-montenegros-skies%2F&tbnid=YUUlpIPFcVC3dM&vet=12ahUKEwi5gsi9ipD6AhXEqqQKHW9zCiYQMygOegUIARDbAQ..i&docid=7UMjctyRWQ1KrM&w=3543&h=2362&q=aircraft%20nato&ved=2ahUKEwi5gsi9ipD6AhXEqqQKHW9zCiYQMygOegUIARDbAQ" width="150px"/><br/>
+<img src="https://user-images.githubusercontent.com/48527899/189754894-7abb97a1-d9d7-466e-ba2e-963ec3e13a2f.jpeg" width="500px"/><br/>
 
 # Nato Aircraft Classifier
 [![CI](https://github.com/dmatgol/nato-ac-classifier/actions/workflows/main.yml/badge.svg)](https://github.com/dmatgol/nato-ac-classifier/actions/workflows/main.yml)
