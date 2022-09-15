@@ -37,7 +37,7 @@ pip install -r requirements.txt
 This repository contains the following structure:
  - configs:
     - dataset:
-        - train_images_path: Path of the folder containing the images in the dataset used for training. These will be split into: train, validation and test set. 
+        - train_images_path: Path of the folder containing the images in the dataset used for training. These will be split into: train, validation and test set.
         - labels_path: Path of the folder containing the labels.
         - test_images_path: Path of the folder containing new images not used in the train process. This path is used if we want to test the model in a completely new dataset. Only used when running `main.py` in inference mode (attribute: `run_mode: serve` in `configs/model/cnn.yaml`).
     - model: Contains the model hyperparameters (The parameters in this file correspond to the parameters of the best performing model achieved.)
@@ -49,7 +49,7 @@ This repository contains the following structure:
     - Best_trained_model: Folder containing the best performing model.
     - Serve: Folder containing the results when ```main.py``` is run in `serve` (inference) mode. For every time, that ```main.py``` is run in `serve` mode, a new folder under **Serve**  will be created (folder name will be the timestamp when the `main.py` was started) to save the results for different runs of `main.py`.
     - Train: Same logic as above, but when `main.py` is run in training mode.
-- src: 
+- src:
     - Contains the model creation, training, evaluation and prediction mode. Additionally, it also contains the metrics used to evaluate the model performance.
 - utils:
     - A set of useful functions, including constants definition.
