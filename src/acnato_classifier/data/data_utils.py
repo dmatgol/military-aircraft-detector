@@ -6,11 +6,11 @@ import pandas as pd
 
 class DataUtils:
     @staticmethod
-    def train_valid_split(dataset_dir_path: str, valid_frac: float = 0.15):
+    def train_valid_split(dataset_dir_path: str, valid_frac: float = 0.20):
 
         images_annotations_path_list = []
         for file in os.listdir(dataset_dir_path):
-            if ~file.endswith(".csv"):
+            if not file.endswith(".csv"):
                 file_name = file.split(".")[0]
                 image_annotation = {
                     "AnnotationPath": os.path.join(
@@ -24,8 +24,11 @@ class DataUtils:
         images_annotations_path_df.sample(frac=1, random_state=0)  # shuffle dataset
         train_split = int((1 - valid_frac) * len(images_annotations_path_df))
 
+        parent_dir = os.path.dirname(os.path.realpath(__file__))
         train_df = images_annotations_path_df.iloc[:train_split]
+        train_df.to_csv(f"{parent_dir}/train/image_annotations.csv", index=False)
         valid_df = images_annotations_path_df.iloc[train_split:]
+        valid_df.to_csv(f"{parent_dir}/valid/image_annotations.csv", index=False)
         return train_df, valid_df
 
     def copy_images_and_annotations_to_folder(dataset: pd.DataFrame, dest_folder: str):

@@ -1,0 +1,8 @@
+batch_size: 64
+resize_to: 512 # resize the image for training and transforms
+epochs: 100
+save_after_epochs: 5
+num_classes: 2
+classes:
+  - background
+  - military_aircraft

@@ -131,6 +131,9 @@ dmypy.json
 # images
 *.jpg
 
+# spreadsheets
+*.csv
+
 # Others
 .DS_Store
 *.csv
