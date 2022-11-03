@@ -127,3 +127,19 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# images
+*.jpg
+
+# spreadsheets
+*.csv
+
+# Others
+.DS_Store
+*.csv
+
+# tensorboardX
+events.out.tfevents.*
+
+# vscode settings
+.vscode/
