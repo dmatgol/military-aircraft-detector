@@ -143,3 +143,6 @@ events.out.tfevents.*
 
 # vscode settings
 .vscode/
+
+# folder with model result train experiments
+*/model_experiments/

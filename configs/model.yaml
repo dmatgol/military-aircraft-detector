@@ -1,8 +1,13 @@
-batch_size: 64
-resize_to: 512 # resize the image for training and transforms
-epochs: 100
-save_after_epochs: 5
-num_classes: 2
+model_name: FasterRCNN
 classes:
   - background
   - military_aircraft
+model_parameters:
+  num_classes: 2
+  # save_after_epochs: 5
+model_train_config:
+  img_width: 512 # resize the image for training and transforms
+  img_height: 512 # resize the image for training and transforms
+  batch_size: 2
+  max_epochs: 1
+  num_workers: 0
