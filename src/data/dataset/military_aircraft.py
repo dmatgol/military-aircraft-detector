@@ -28,6 +28,7 @@ class MilitaryAircraftDataset(Dataset):
         annotation_path = self.image_annotations_df.iloc[idx].AnnotationPath
 
         image = cv2.imread(image_path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image_resized = cv2.resize(image, (self.width, self.height)).astype(np.float32)
         image_resized /= 255.0  # RGB code max 255
 
