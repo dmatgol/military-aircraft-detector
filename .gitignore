@@ -137,3 +137,9 @@ dmypy.json
 # Others
 .DS_Store
 *.csv
+
+# tensorboardX
+events.out.tfevents.*
+
+# vscode settings
+.vscode/
