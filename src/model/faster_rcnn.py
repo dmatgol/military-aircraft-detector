@@ -1,8 +1,16 @@
+import logging
+import time
+
+import cv2
+import numpy as np
 import torch
 import torchvision
 from pytorch_lightning import LightningModule
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+
+from settings.general import data_paths
+from utils.utils import draw_boxes, draw_fps
 
 
 class FasterRCNNModel(LightningModule):
@@ -30,7 +38,7 @@ class FasterRCNNModel(LightningModule):
         model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
         return model
 
-    def forward(self, images):
+    def forward(self, images: torch.tensor):
         return self.model(images)
 
     def configure_optimizers(self):
@@ -84,3 +92,113 @@ class FasterRCNNModel(LightningModule):
         mAPs = {"val_" + k: v for k, v in self.map.compute().items()}
         self.print(mAPs)
         self.map.reset()
+
+    def predict_image(self, image_path: str, iou_threshold: float = 0.85):
+        self.model.eval()
+        orig_image = cv2.imread(image_path)
+        image = self._process_image_for_inference(orig_image)
+        pred = self.model(image)
+        # verify if we have predictions and if so draw boxes
+        orig_image = self.draw_bboxes_if_detection(orig_image, pred, iou_threshold)
+        cv2.imshow("Prediction", orig_image)
+        cv2.waitKey(0)
+
+    def _process_image_for_inference(
+        self, orig_image: torch.tensor, resize: bool = False
+    ):
+        image = orig_image.copy().astype(np.float32)
+        # make the pixel range between 0 and 1
+        if resize:
+            image = cv2.resize(image, (256, 256))
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
+        image /= 255.0
+        image = np.transpose(image, (2, 0, 1)).astype(np.float32)
+        # convert to tensor
+        image = torch.tensor(image, dtype=torch.float)
+        # add batch dimension
+        image = torch.unsqueeze(image, 0)
+        return image
+
+    def draw_bboxes_if_detection(
+        self,
+        orig_image: torch.tensor,
+        pred: list[dict[str, torch.tensor]],
+        iou_threshold: float,
+        resize: tuple[int, int] = None,
+    ):
+        if len(pred[0]["boxes"]) != 0:
+            boxes = pred[0]["boxes"].data.numpy()
+            scores = pred[0]["scores"].data.numpy()
+            # filter out boxes according to `iou_threshold`
+            boxes = boxes[scores >= iou_threshold].astype(np.int32)
+            # we only have one class
+            pred_classes = ["military_aircraft" for i in range(len(boxes))]
+
+            # draw the bounding boxes and write the class name on top of it
+            orig_image = draw_boxes(
+                orig_image=orig_image,
+                boxes=boxes,
+                pred_classes=pred_classes,
+                resize=resize,
+            )
+        return orig_image
+
+    def predict_video(self, video_path: str, iou_threshold: float = 0.85):
+        self.model.eval()
+        cap, video_output = self._read_video(video_path)
+        self.process_frames_and_predict(cap, video_output, iou_threshold)
+
+    def _read_video(self, video_path: str):
+        cap = cv2.VideoCapture(video_path)
+
+        if cap.isOpened() is False:
+            logging.error(
+                "Error trying to read video. Please verify if path is correct."
+            )
+
+        # Get Frame width and height
+        frame_width = int(cap.get(3))
+        frame_height = int(cap.get(4))
+
+        # Create VideoWriter object
+        video_output = cv2.VideoWriter(
+            f"{data_paths.test_videos}/video_inference.mp4",
+            cv2.VideoWriter_fourcc(*"mp4v"),
+            60,
+            (frame_width, frame_height),
+        )
+        return cap, video_output
+
+    def process_frames_and_predict(
+        self, cap: cv2.VideoCapture, video_output: cv2.VideoWriter, iou_threshold: float
+    ):
+        # Process entire video
+        while cap.isOpened():
+            # Capture each frame of the video
+            frame_return_value, frame = cap.read()
+            if frame_return_value:
+                image = self._process_image_for_inference(frame)
+                # Compute prediction time to calculate frames per second
+                start_time = time.time()
+                with torch.no_grad():
+                    # Compute predictions for the current frame
+                    pred = self.model(image)
+                end_time = time.time()
+
+                fps = 1 / (end_time - start_time)
+
+                frame = self.draw_bboxes_if_detection(frame, pred, iou_threshold)
+                frame = draw_fps(frame, fps)
+                cv2.imshow("image", frame)
+                video_output.write(frame)
+                # press `q` to exit
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    logging.warning("User stopped the video inference")
+                    break
+
+            else:
+                logging.error("Not able to get frame from video. Skipping frame...")
+                break
+
+        # Release VideoCapture()
+        cap.release()

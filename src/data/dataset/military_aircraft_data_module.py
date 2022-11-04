@@ -2,9 +2,9 @@ import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
 
-from src.data.data_augmentations import get_train_transform, get_valid_transform
-from src.data.dataset.military_aircraft import MilitaryAircraftDataset
-from src.settings.general import data_paths
+from data.data_augmentations import get_train_transform, get_valid_transform
+from data.dataset.military_aircraft import MilitaryAircraftDataset
+from settings.general import data_paths
 from utils.utils import collate_fn
 
 
