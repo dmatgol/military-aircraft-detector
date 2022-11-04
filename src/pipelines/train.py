@@ -5,10 +5,10 @@ from datetime import datetime
 
 from pytorch_lightning import Trainer
 
+from data.dataset.military_aircraft_data_module import MilitaryAircraftDataModule
+from model.faster_rcnn import FasterRCNNModel
 from pipelines.base import Pipeline
-from src.data.dataset.military_aircraft_data_module import MilitaryAircraftDataModule
-from src.model.faster_rcnn import FasterRCNNModel
-from src.settings.general import ModelConfig
+from settings.general import ModelConfig
 
 
 class Train(Pipeline):

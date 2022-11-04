@@ -9,6 +9,9 @@ class Paths(BaseSettings):
 
     train_image_annotations: str = "src/data/train/image_annotations.csv"
     valid_image_annotations: str = "src/data/valid/image_annotations.csv"
+    best_model: str = "src/model/best_model/checkpoints/"
+    test_images: str = "src/data/test/test_images/"
+    test_videos: str = "src/data/test/test_videos/"
 
 
 class ModelConfig(BaseModel):
