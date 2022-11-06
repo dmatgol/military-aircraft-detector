@@ -1,8 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn:python3.8
-# FROM python:3.10-slim
-
-RUN apt-get update
-RUN apt-get -y install cmake
+FROM python:3.10-slim
 
 RUN mkdir /nato-object-detector
 
@@ -12,7 +8,6 @@ RUN  mkdir -p ./src/app
 
 COPY requirements_fastapi.txt .
 
-ENV USE_NNPACK=0
 
 RUN pip install -r requirements_fastapi.txt
 
@@ -29,7 +24,4 @@ COPY ./src/app/main.py ./src/app/
 EXPOSE 8001
 
 ENTRYPOINT ["python"]
-CMD ["-m", "uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8001"]
-
-
-# docker run -d --platform linux/amd64 -p 8000:8000 -v ${PWD}/src/app/data/test:/api/app/test military_aircraft_detector_api:0.1.0 sleep infinity
+CMD ["-m","uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8001"]
