@@ -18,6 +18,7 @@ def main() -> None:
     args = parse_cli_args()
     model_config = read_model_config("configs/model.yaml")
     logging.info(f"Started application in {args.run_mode} mode.")
+    args.run_mode = RunMode.TRAIN
     if args.run_mode == RunMode.TRAIN:
         Train(model_config=model_config).run()
     elif args.run_mode == RunMode.INFERENCE:
