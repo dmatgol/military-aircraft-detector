@@ -1,7 +1,6 @@
 import os
 
 import torch
-
 from model.faster_rcnn import FasterRCNNModel
 from settings.general import data_paths
 

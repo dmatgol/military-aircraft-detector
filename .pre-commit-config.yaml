@@ -25,11 +25,11 @@ repos:
         args: ["--install-types", "--non-interactive", "--ignore-missing-imports"]
         additional_dependencies: [tokenize-rt==3.2.0]
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v2.37.3
-    hooks:
-      - id: pyupgrade
-        args: [--py39-plus]
+#   - repo: https://github.com/asottile/pyupgrade
+#     rev: v2.37.3
+#     hooks:
+#       - id: pyupgrade
+#         args: [--py39-plus]
 
   - repo: https://github.com/PyCQA/flake8
     rev: 5.0.4

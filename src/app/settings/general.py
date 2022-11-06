@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict, List
 
 import torch
 import yaml
@@ -16,9 +16,9 @@ class Paths(BaseSettings):
 
 class ModelConfig(BaseModel):
     model_name: str
-    classes: list[str]
-    model_parameters: dict[str, Any]
-    model_train_config: dict[str, Any]
+    classes: List[str]
+    model_parameters: Dict[str, Any]
+    model_train_config: Dict[str, Any]
 
     @classmethod
     def from_yaml(cls, model_config_path: str):

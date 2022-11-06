@@ -11,7 +11,6 @@ import torchvision
 from pytorch_lightning import LightningModule
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-
 from utils.utils import draw_boxes, draw_fps
 
 

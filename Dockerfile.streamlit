@@ -1,0 +1,23 @@
+FROM python:3.10-slim
+
+RUN mkdir /nato-object-detector
+
+WORKDIR nato-object-detector
+
+RUN mkdir -p ./src/app
+
+COPY requirements_streamlit.txt .
+
+RUN pip install -r requirements_streamlit.txt
+
+COPY ./configs/ ./configs
+COPY ./src/app/frontend/ ./src/app/frontend
+COPY ./src/app/model/faster_rcnn.py ./src/app/model/
+COPY ./src/app/model/model_utils.py ./src/app/model/
+COPY ./src/app/settings/ ./src/app/settings
+COPY ./src/app/utils/utils.py ./src/app/utils/
+COPY ./src/app/app_dashboard.py ./src/app/
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "--server.port", "8501", "--server.enableCORS", "false", "src/app/app_dashboard.py"]
