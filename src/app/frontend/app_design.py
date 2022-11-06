@@ -170,7 +170,7 @@ def video_detection_from_api(tmp_file, confidence):
     cap.release()
 
 
-# @st.cache()
+@st.cache()
 def predict_video_frame_with_api(frame: np.array, confidence: float):
     image_frame = Image.fromarray(frame)
     # save image to an in-memory bytes buffer
