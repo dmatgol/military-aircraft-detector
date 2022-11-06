@@ -28,7 +28,9 @@ def draw_boxes(
     resize: tuple[int, int] = None,
 ):
     # draw the bounding boxes and write the class name on top of it
+    object_detected = False
     for j, box in enumerate(boxes):
+        object_detected = True
         if resize is not None:
             box = [
                 int(box[0] / resize[0]) * orig_image.shape[1],  # width
@@ -55,7 +57,7 @@ def draw_boxes(
             lineType=cv2.LINE_AA,
         )
 
-    return orig_image
+    return orig_image, object_detected
 
 
 def draw_fps(orig_image: torch.tensor, fps: float):
