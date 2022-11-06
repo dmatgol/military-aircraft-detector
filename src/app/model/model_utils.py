@@ -2,8 +2,8 @@ import os
 
 import torch
 
-from model.faster_rcnn import FasterRCNNModel
-from settings.general import data_paths
+from src.app.model.faster_rcnn import FasterRCNNModel
+from src.app.settings.general import data_paths
 
 
 def load_trained_model(model_config):

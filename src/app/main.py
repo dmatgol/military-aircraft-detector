@@ -1,9 +1,10 @@
 import socket
 
 import uvicorn
-from api_models.api_model import APIState
-from api_routers import cached_files, inference
 from fastapi import FastAPI
+
+from src.app.api_models.api_model import APIState
+from src.app.api_routers import cached_files, inference
 
 app = FastAPI(
     title="Military Aircraft Detector",

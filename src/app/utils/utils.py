@@ -3,7 +3,7 @@ from __future__ import annotations
 import cv2
 import torch
 
-from settings.general import ModelConfig
+from src.app.settings.general import ModelConfig
 
 
 def collate_fn(batch):

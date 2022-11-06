@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict, List  # noqa
 
 import torch
 import yaml
@@ -16,8 +16,8 @@ class Paths(BaseSettings):
 
 class ModelConfig(BaseModel):
     model_name: str
-    classes: list[str]
-    model_parameters: dict[str, Any]
+    classes: list[str]  # noqa
+    model_parameters: dict[str, Any]  # noqa
     model_train_config: dict[str, Any]
 
     @classmethod
