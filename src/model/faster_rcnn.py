@@ -1,15 +1,18 @@
+from __future__ import annotations
+
 import logging
 import time
+from typing import Any
 
 import cv2
 import numpy as np
 import torch
 import torchvision
+from PIL import Image
 from pytorch_lightning import LightningModule
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
-from settings.general import data_paths
 from utils.utils import draw_boxes, draw_fps
 
 
@@ -93,15 +96,22 @@ class FasterRCNNModel(LightningModule):
         self.print(mAPs)
         self.map.reset()
 
-    def predict_image(self, image_path: str, iou_threshold: float = 0.85):
+    def predict_image(self, image_path: str | Any, iou_threshold: float = 0.85):
         self.model.eval()
-        orig_image = cv2.imread(image_path)
+        if isinstance(image_path, str):
+            orig_image = cv2.imread(image_path)
+            orig_image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
+        else:  # uploaded images from frontend
+            pil_image = Image.open(image_path)
+            orig_image = np.array(pil_image)
+
         image = self._process_image_for_inference(orig_image)
         pred = self.model(image)
         # verify if we have predictions and if so draw boxes
-        orig_image = self.draw_bboxes_if_detection(orig_image, pred, iou_threshold)
-        cv2.imshow("Prediction", orig_image)
-        cv2.waitKey(0)
+        orig_image, object_detected = self.draw_bboxes_if_detection(
+            orig_image, pred, iou_threshold
+        )
+        return orig_image, object_detected
 
     def _process_image_for_inference(
         self, orig_image: torch.tensor, resize: bool = False
@@ -110,7 +120,6 @@ class FasterRCNNModel(LightningModule):
         # make the pixel range between 0 and 1
         if resize:
             image = cv2.resize(image, (256, 256))
-        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
         image /= 255.0
         image = np.transpose(image, (2, 0, 1)).astype(np.float32)
         # convert to tensor
@@ -126,6 +135,7 @@ class FasterRCNNModel(LightningModule):
         iou_threshold: float,
         resize: tuple[int, int] = None,
     ):
+        object_detected = False
         if len(pred[0]["boxes"]) != 0:
             boxes = pred[0]["boxes"].data.numpy()
             scores = pred[0]["scores"].data.numpy()
@@ -135,18 +145,19 @@ class FasterRCNNModel(LightningModule):
             pred_classes = ["military_aircraft" for i in range(len(boxes))]
 
             # draw the bounding boxes and write the class name on top of it
-            orig_image = draw_boxes(
+            orig_image, object_detected = draw_boxes(
                 orig_image=orig_image,
                 boxes=boxes,
                 pred_classes=pred_classes,
                 resize=resize,
             )
-        return orig_image
+        return orig_image, object_detected
 
-    def predict_video(self, video_path: str, iou_threshold: float = 0.85):
+    def predict_video(self, video_path: str, iou_threshold: float = 0.85, stframe=None):
         self.model.eval()
-        cap, video_output = self._read_video(video_path)
-        self.process_frames_and_predict(cap, video_output, iou_threshold)
+        cap = self._read_video(video_path)
+        cap = self.process_frames_and_predict(cap, iou_threshold, stframe)
+        return cap
 
     def _read_video(self, video_path: str):
         cap = cv2.VideoCapture(video_path)
@@ -156,27 +167,17 @@ class FasterRCNNModel(LightningModule):
                 "Error trying to read video. Please verify if path is correct."
             )
 
-        # Get Frame width and height
-        frame_width = int(cap.get(3))
-        frame_height = int(cap.get(4))
-
-        # Create VideoWriter object
-        video_output = cv2.VideoWriter(
-            f"{data_paths.test_videos}/video_inference.mp4",
-            cv2.VideoWriter_fourcc(*"mp4v"),
-            60,
-            (frame_width, frame_height),
-        )
-        return cap, video_output
+        return cap
 
     def process_frames_and_predict(
-        self, cap: cv2.VideoCapture, video_output: cv2.VideoWriter, iou_threshold: float
+        self, cap: cv2.VideoCapture, iou_threshold: float, stframe
     ):
         # Process entire video
         while cap.isOpened():
             # Capture each frame of the video
             frame_return_value, frame = cap.read()
             if frame_return_value:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 image = self._process_image_for_inference(frame)
                 # Compute prediction time to calculate frames per second
                 start_time = time.time()
@@ -187,18 +188,15 @@ class FasterRCNNModel(LightningModule):
 
                 fps = 1 / (end_time - start_time)
 
-                frame = self.draw_bboxes_if_detection(frame, pred, iou_threshold)
+                frame, _ = self.draw_bboxes_if_detection(frame, pred, iou_threshold)
                 frame = draw_fps(frame, fps)
-                cv2.imshow("image", frame)
-                video_output.write(frame)
-                # press `q` to exit
-                if cv2.waitKey(1) & 0xFF == ord("q"):
-                    logging.warning("User stopped the video inference")
-                    break
+                stframe.image(frame, use_column_width=True)
+                # video_output.write(frame)
 
             else:
                 logging.error("Not able to get frame from video. Skipping frame...")
                 break
 
         # Release VideoCapture()
+        # return cap
         cap.release()
