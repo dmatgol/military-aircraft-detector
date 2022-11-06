@@ -7,12 +7,11 @@ import cv2
 import numpy as np
 import requests
 import streamlit as st
-from PIL import Image
-
 from model.model_utils import load_trained_model
+from PIL import Image
 from utils.utils import read_model_config
 
-backend = " http://0.0.0.0:8080/"
+backend = " http://military_aircraft_detector_api:8001/"
 
 
 def app_design():
@@ -120,7 +119,7 @@ def predict_image_from_uploaded_file(file: Any, confidence: float):
     files = {"files": file.getvalue()}
     data = {"confidence": confidence}
     url = backend + "inference/image/uploaded_image"
-    r = requests.get(url=url, data=data, files=files, timeout=8000)
+    r = requests.post(url=url, data=data, files=files, timeout=8000)
     arr = np.frombuffer(r.content, np.uint8)
     annotated_image = cv2.imdecode(arr, cv2.IMREAD_UNCHANGED)
     return annotated_image
@@ -140,7 +139,7 @@ def cached_image_design(file_type: str, confidence):
 def predict_image_from_path(filename_selected: str, confidence: float):
     url = backend + f"inference/image/image_from_path/{filename_selected}"
     data = {"image_name": filename_selected, "confidence": confidence}
-    r = requests.get(url=url, data=data, timeout=8000)
+    r = requests.post(url=url, data=data, timeout=8000)
     annotated_image = Image.open(io.BytesIO(r.content)).convert("RGB")
     return annotated_image
 
@@ -180,7 +179,7 @@ def predict_video_frame_with_api(frame: np.array, confidence: float):
     frame_file = {"frame": im_bytes}
     data = {"confidence": confidence}
     url = backend + "inference/video/frame"
-    r = requests.get(url=url, data=data, files=frame_file, timeout=8000)
+    r = requests.post(url=url, data=data, files=frame_file, timeout=8000)
     arr = np.frombuffer(r.content, np.uint8)
     img_np = cv2.imdecode(arr, cv2.IMREAD_UNCHANGED)
     if img_np is None:

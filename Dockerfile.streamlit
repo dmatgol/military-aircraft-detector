@@ -4,24 +4,20 @@ RUN mkdir /nato-object-detector
 
 WORKDIR nato-object-detector
 
-RUN  mkdir -p ./src/app
+RUN mkdir -p ./src/app
 
-COPY requirements_fastapi.txt .
+COPY requirements_streamlit.txt .
 
-
-RUN pip install -r requirements_fastapi.txt
+RUN pip install -r requirements_streamlit.txt
 
 COPY ./configs/ ./configs
-COPY ./src/app/api_models/ ./src/app/api_models
-COPY ./src/app/api_routers/ ./src/app/api_routers
+COPY ./src/app/frontend/ ./src/app/frontend
 COPY ./src/app/model/faster_rcnn.py ./src/app/model/
 COPY ./src/app/model/model_utils.py ./src/app/model/
 COPY ./src/app/settings/ ./src/app/settings
 COPY ./src/app/utils/utils.py ./src/app/utils/
-COPY ./src/app/main.py ./src/app/
+COPY ./src/app/app_dashboard.py ./src/app/
 
+EXPOSE 8501
 
-EXPOSE 8001
-
-ENTRYPOINT ["python"]
-CMD ["src/app/main.py"]
+CMD ["streamlit", "run", "--server.port", "8501", "--server.enableCORS", "false", "src/app/app_dashboard.py"]

@@ -1,10 +1,9 @@
 import os
 
+from api_models.api_model import FileType
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
-
-from src.app.api_models.api_model import FileType
-from src.app.settings.general import data_paths
+from settings.general import data_paths
 
 router = APIRouter()
 

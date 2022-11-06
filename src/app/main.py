@@ -1,10 +1,9 @@
 import socket
 
 import uvicorn
+from api_models.api_model import APIState
+from api_routers import cached_files, inference
 from fastapi import FastAPI
-
-from src.app.api_models.api_model import APIState
-from src.app.api_routers import cached_files, inference
 
 app = FastAPI(
     title="Military Aircraft Detector",
@@ -25,4 +24,4 @@ def heartbeat():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8001)

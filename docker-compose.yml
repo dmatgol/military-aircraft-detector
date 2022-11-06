@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - 8001:8001
+    volumes:
+      - ${PWD}/src/app/data/test:/nato-object-detector/src/app/data/test
+      - ${PWD}/src/app/model/best_model:/nato-object-detector/src/app/model/best_model
+    networks:
+      - deploy_network
+    container_name: military_aircraft_detector_api
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    depends_on:
+      - fastapi
+    ports:
+        - 8501:8501
+    volumes:
+      - ${PWD}/src/app/data/test:/nato-object-detector/src/app/data/test
+      - ${PWD}/src/app/model/best_model:/nato-object-detector/src/app/model/best_model
+    networks:
+      - deploy_network
+    container_name: streamlit
+
+networks:
+  deploy_network:
+    driver: bridge
