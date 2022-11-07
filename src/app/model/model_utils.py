@@ -2,7 +2,7 @@ import os
 
 import torch
 from model.faster_rcnn import FasterRCNNModel
-from settings.general import data_paths
+from settings.general import DEVICE, data_paths
 
 
 def load_trained_model(model_config):
@@ -10,7 +10,7 @@ def load_trained_model(model_config):
     checkpoint_path = os.listdir(data_paths.best_model)[0]
     checkpoint = torch.load(
         os.path.join(data_paths.best_model, checkpoint_path),
-        map_location=torch.device("cpu"),
+        map_location=torch.device(DEVICE),
     )
     model.load_state_dict(checkpoint["state_dict"])
     return model
