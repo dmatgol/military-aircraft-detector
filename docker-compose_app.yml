@@ -29,18 +29,6 @@ services:
       - deploy_network
     container_name: streamlit
 
-  train_model:
-    build:
-      context: .
-      dockerfile: Dockerfile.trainmodel
-    environment:
-      FULL_DATASET_DIR: ${FULL_DATASET_DIR}
-    volumes:
-      - ${FULL_DATASET_DIR}:/nato-object-detector/src/app/data/image_annotations
-      - ${PWD}/src/app/model_experiments:/nato-object-detector/src/app/model_experiments
-    command: python src/app/train_main.py --full_dataset_dir "/nato-object-detector/src/app/data/image_annotations"
-    container_name: train_model
-
 networks:
   deploy_network:
     driver: bridge

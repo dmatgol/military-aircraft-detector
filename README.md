@@ -18,8 +18,8 @@ Please make sure you have `docker` and `docker-compose` installed.
 
 1. **Run the application:**
 ```
-docker-compose build fastapi streamlit
-docker-compose up fastapi streamlit
+docker-compose -f docker-compose_app.yml build
+docker-compose -f docker-compose_app.yml up
 ```
 
 Notes:
@@ -35,6 +35,6 @@ Notes:
     ```
     3. Execute the instructions below:
     ```
-    docker-compose build train_model
-    docker-compose up train_model
+    docker-compose -f docker-compose_train_model.yml build
+    docker-compose -f docker-compose_train_model.yml up
     ```
