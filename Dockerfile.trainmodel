@@ -1,0 +1,21 @@
+FROM python:3.10-slim
+
+RUN mkdir /nato-object-detector
+
+WORKDIR nato-object-detector
+
+RUN  mkdir -p ./src/app
+
+COPY requirements_fastapi.txt .
+
+
+RUN pip install -r requirements_fastapi.txt
+
+COPY ./configs/ ./configs
+COPY ./src/app/data/dataset/ ./src/app/data/dataset
+COPY ./src/app/data/data_augmentations.py ./src/app/data/
+COPY ./src/app/model/faster_rcnn.py ./src/app/model/
+COPY ./src/app/pipelines/ ./src/app/pipelines
+COPY ./src/app/settings/ ./src/app/settings
+COPY ./src/app/utils/ ./src/app/utils
+COPY ./src/app/train_main.py ./src/app/

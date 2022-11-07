@@ -2,9 +2,22 @@ import os
 import shutil
 
 import pandas as pd
+from pipelines.base import Pipeline
 
 
-class DataUtils:
+class PreProcessing(Pipeline):
+    def __init__(self, full_dataset_dir: str) -> None:
+        self.full_dataset_dir = full_dataset_dir
+
+    def run(self) -> None:
+        data_dir = os.path.dirname(
+            os.path.dirname(os.path.realpath(__file__))
+        )  # get src/app
+        self.create_train_validation_folder(data_dir=data_dir)
+        train_df, valid_df = self.train_valid_split(self.full_dataset_dir)
+        self.copy_images_and_annotations_to_folder(train_df, f"{data_dir}/data/train")
+        self.copy_images_and_annotations_to_folder(valid_df, f"{data_dir}/data/valid")
+
     @staticmethod
     def train_valid_split(dataset_dir_path: str, valid_frac: float = 0.20):
 
@@ -28,6 +41,7 @@ class DataUtils:
         valid_df = images_annotations_path_df.iloc[train_split:]
         return train_df, valid_df
 
+    @staticmethod
     def copy_images_and_annotations_to_folder(dataset: pd.DataFrame, dest_folder: str):
         for index, row in dataset.iterrows():
             for column in ["AnnotationPath", "ImagePath"]:
@@ -40,15 +54,6 @@ class DataUtils:
         dataset.to_csv(f"{dest_folder}/image_annotations.csv", index=False)
 
     @staticmethod
-    def create_train_validation_folder():
-        data_dir = os.path.dirname(os.path.realpath(__file__))
-        os.makedirs(f"{data_dir}/train", exist_ok=True)
-        os.makedirs(f"{data_dir}/valid", exist_ok=True)
-
-
-if __name__ == "__main__":
-    data_dir = os.path.dirname(os.path.realpath(__file__))
-    DataUtils.create_train_validation_folder()
-    train_df, valid_df = DataUtils.train_valid_split(os.environ["DATASET_PATH"])
-    DataUtils.copy_images_and_annotations_to_folder(train_df, f"{data_dir}/train")
-    DataUtils.copy_images_and_annotations_to_folder(valid_df, f"{data_dir}/valid")
+    def create_train_validation_folder(data_dir: str):
+        os.makedirs(f"{data_dir}/data/train", exist_ok=True)
+        os.makedirs(f"{data_dir}/data/valid", exist_ok=True)
