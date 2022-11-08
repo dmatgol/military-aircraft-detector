@@ -7,7 +7,10 @@ from settings.general import DEVICE, data_paths
 
 def load_trained_model(model_config):
     model = FasterRCNNModel(**model_config.model_parameters)
-    checkpoint_path = os.listdir(data_paths.best_model)[0]
+    checkpoint_dir = os.listdir(data_paths.best_model)
+    for file in checkpoint_dir:
+        if file.endswith(".ckpt"):
+            checkpoint_path = file
     checkpoint = torch.load(
         os.path.join(data_paths.best_model, checkpoint_path),
         map_location=torch.device(DEVICE),

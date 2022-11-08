@@ -11,9 +11,15 @@ router = APIRouter()
 @router.get("/{file_type}")
 def get_cached_files_options(file_type: FileType):
     if file_type == FileType.IMAGE:
-        list_of_files = os.listdir(data_paths.test_images)
+        list_of_files = []
+        for file in os.listdir(data_paths.test_images):
+            if file.endswith((".jpeg", ".jpg", ".png")):
+                list_of_files.append(file)
     elif file_type == FileType.VIDEO:
-        list_of_files = os.listdir(data_paths.test_videos)
+        list_of_files = []
+        for file in os.listdir(data_paths.test_videos):
+            if file.endswith((".mp4", "mov", "avi", "m4v")):
+                list_of_files.append(file)
     else:
         raise HTTPException(
             status_code=404,
