@@ -14,6 +14,7 @@ COPY ./configs/ ./configs
 COPY ./src/app/frontend/ ./src/app/frontend
 COPY ./src/app/model/faster_rcnn.py ./src/app/model/
 COPY ./src/app/model/model_utils.py ./src/app/model/
+COPY ./src/app/model/best_model/ ./src/app/model/best_model/
 COPY ./src/app/settings/ ./src/app/settings
 COPY ./src/app/utils/utils.py ./src/app/utils/
 COPY ./src/app/app_dashboard.py ./src/app/
