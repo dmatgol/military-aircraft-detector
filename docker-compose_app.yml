@@ -2,29 +2,23 @@ version: '3'
 
 services:
   fastapi:
-    build:
-      context: .
-      dockerfile: Dockerfile.fastapi
+    image: dmatigol/military_aircraft_detector:faster_rcnn_model
     ports:
       - 8001:8001
     volumes:
       - ${PWD}/src/app/data/test:/nato-object-detector/src/app/data/test
-      - ${PWD}/src/app/model/best_model:/nato-object-detector/src/app/model/best_model
     networks:
       - deploy_network
     container_name: military_aircraft_detector_api
 
   streamlit:
-    build:
-      context: .
-      dockerfile: Dockerfile.streamlit
+    image: dmatigol/military_aircraft_detector:streamlit_frontend
     depends_on:
       - fastapi
     ports:
         - 8501:8501
     volumes:
       - ${PWD}/src/app/data/test:/nato-object-detector/src/app/data/test
-      - ${PWD}/src/app/model/best_model:/nato-object-detector/src/app/model/best_model
     networks:
       - deploy_network
     container_name: streamlit

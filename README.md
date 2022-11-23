@@ -18,13 +18,14 @@ Please make sure you have `docker` and `docker-compose` installed.
 
 1. **Run the application:**
 ```
-docker-compose -f docker-compose_app.yml build
+docker-compose -f docker-compose_app.yml pull
 docker-compose -f docker-compose_app.yml up
 ```
 
 Notes:
 - Please give a bit of time for the application to start. Then, just go to `http://localhost:8501/` to see the dashboard. You can also see the fastapi swagger documentation if you go to `http://localhost:8001/docs`.
 - The Pytorch image in the Dockerfiles is quite big, so please run this application with a machine with at least 16GB RAM. If you experience any problem, please try to increase the RAM that docker is able to use.
+- The Docker images for the API and Streamlit (which include the trained model) are stored in Docker hub, hence the reason for the docker-compose pull. Please note that the image pull takes approximately 2 minutes.
 
 2. **Train the model:**
 
